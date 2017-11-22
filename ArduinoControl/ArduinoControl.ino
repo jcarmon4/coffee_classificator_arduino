@@ -1,16 +1,24 @@
 #include <Servo.h> 
+#define CLASSIFICATOR 9
+#define DISPENSER 6
+
 String read_buffer; //String captured from serial port
 Servo myservo;  // create servo object to control a servo 
 int n; //value to write to servo
 
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  pinMode(DISPENSER, OUTPUT);
   myservo.writeMicroseconds(1500); //set initial servo position if desired
-  myservo.attach(9, 500, 2500);  //the pin for the servo control, and range if desired
+  myservo.attach(CLASSIFICATOR, 500, 2500);  //the pin for the servo control, and range if desired
   Serial.println("Ready"); // so I can keep track of what is loaded
 }
 
 void loop() {
+  // Start dispenser
+  analogWrite(DISPENSER, 100);
+  analogWrite(DISPENSER, 22);
   if (Serial.available() > 0) {
     read_buffer = Serial.readStringUntil('\n');
     // Takes the corresponding action according to the first char of the String.
@@ -24,15 +32,19 @@ void loop() {
 void take_action(char action) {
     switch (action) {
       case 'l':
+        // Stop dispenser
+        analogWrite(DISPENSER, 0);
         // Turn left.
-        move_servo(30);
+        move_servo(20);
         delay(1000);
         move_servo(90);
         Serial.println("1");
         break;
       case 'r':
+        // Stop dispenser
+        analogWrite(DISPENSER, 0);
         // Turn right.
-        move_servo(150);
+        move_servo(160);
         delay(1000);
         move_servo(90);
         Serial.println("1");
